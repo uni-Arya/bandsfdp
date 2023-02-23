@@ -23,12 +23,6 @@ such that the FDP in the list of discoveries is
 with probability
 ![\geq 1 - \gamma](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cgeq%201%20-%20%5Cgamma "\geq 1 - \gamma").
 
-Upper prediction bands offer flexible FDP control: one can increase the
-rejection threshold (thus increasing the size of the discovery set) and
-check the corresponding upper prediction bound to gauge the size of the
-FDP in a post hoc manner. See the application section below for an
-example.
-
 ## Installation
 
 You can install the development version of bandsfdp from
