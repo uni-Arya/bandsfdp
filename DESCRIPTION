@@ -1,12 +1,40 @@
 Package: bandsfdp
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Title: A collection of upper prediction bands on the FDP in TDC's list of 
+  discoveries
+Version: 1.0.0
+Authors@R: c(
+    person(
+      "Arya", "Ebadi",
+      email = "aeba3842@uni.sydney.edu.au", 
+      role  = c("aut", "cre")
+    ),
+    person(
+      "Dong", "Luo",
+      email = "dluo7139@uni.sydney.edu.au",
+      role  = "aut"
+    ),
+    person(
+      "William Stafford", "Noble",
+      email = "william-noble@uw.edu",
+      role  = "aut"
+    ),
+    person(
+      "Uri", "Keich",
+      email   = "uri.keich@sydney.edu.au",
+      role    = "aut",
+      comment = c(ORCID = "0000-0002-3209-5011")
+    )
+  )
+Suggests: fdpbandsdata
+Additional_repositories: https://github.com/uni-Arya/fdpbandsdata
+Description: This package contains functions that calculate upper prediction 
+  bands on the false discovery proportion (FDP) in the list of discoveries 
+  returned by competition-based setups, implementing [insert paper link here]. 
+  Such setups include target-decoy competition (TDC) in computational mass 
+  spectrometry and the knockoff construction in linear regression. Included is 
+  the standardized band (TDC-SB), uniform band (TDC-UB) and the band of 
+  Katsevich-Ramdas (2018) <arXiv:1803.06790> (TDC-KR).
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
