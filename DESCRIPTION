@@ -29,11 +29,11 @@ Suggests: fdpbandsdata
 Additional_repositories: https://github.com/uni-Arya/fdpbandsdata
 Description: This package contains functions that calculate upper prediction 
   bands on the false discovery proportion (FDP) in the list of discoveries 
-  returned by competition-based setups, implementing [insert paper link here]. 
-  Such setups include target-decoy competition (TDC) in computational mass 
-  spectrometry and the knockoff construction in linear regression. Included is 
-  the standardized band (TDC-SB), uniform band (TDC-UB) and the band of 
-  Katsevich-Ramdas (2018) <arXiv:1803.06790> (TDC-KR).
+  returned by competition-based setups, implementing Ebadi et al. (2022)
+  <arXiv:2302.11837>. Such setups include target-decoy competition (TDC) 
+  in computational mass spectrometry and the knockoff construction in linear 
+  regression. Included is the standardized band (TDC-SB), uniform band (TDC-UB) 
+  and the band of Katsevich-Ramdas (2018) <arXiv:1803.06790> (TDC-KR).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

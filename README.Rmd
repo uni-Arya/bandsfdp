@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-This package provides several different upper prediction bands on the FDP in the list of discoveries resulting from competition-based setups (see [insert paper link]). Such setups include target-decoy competition (TDC) in computational mass spectrometry and the knockoff construction in regression.
+This package provides several different upper prediction bands on the FDP in the list of discoveries resulting from competition-based setups (see [Ebadi et al. (2022)](https://arxiv.org/abs/2302.11837)). Such setups include target-decoy competition (TDC) in computational mass spectrometry and the knockoff construction in regression.
 
 The band provides an upper prediction bound on the FDP: given a rejection threshold returned by TDC, a list of target/decoy labels, and a desired confidence level $1 - \gamma$, these functions return a real number $\eta$ such that the FDP in the list of discoveries is $\leq \eta$ with probability $\geq 1 - \gamma$.
 
@@ -69,7 +69,7 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
 
 For competition-based setups that utilizes multiple decoys, one must specify two additional parameters $c \leq \lambda$ of the form $k/(d + 1)$ where $d$ is the number of decoy scores used for each hypothesis and $1 \leq k \leq d$ is an integer. 
 
-For example, if we use $3$ decoy scores for each hypothesis, we may take $c$ and $\lambda$ to be $1/4$, $1/2$, or $3/4$, subject to $c \leq \lambda$. Briefly, the value of $c$ determines the ranks in which the target score is considered "winning." E.g., if $c = 1/4$, $H_i$ is labelled as a target win whenever its corresponding target score is the highest ranked score among all targets/decoys for that hypothesis. Similarly, $\lambda$ determines when the target score is "losing." For more details, see [insert paper link].
+For example, if we use $3$ decoy scores for each hypothesis, we may take $c$ and $\lambda$ to be $1/4$, $1/2$, or $3/4$, subject to $c \leq \lambda$. Briefly, the value of $c$ determines the ranks in which the target score is considered "winning." E.g., if $c = 1/4$, $H_i$ is labelled as a target win whenever its corresponding target score is the highest ranked score among all targets/decoys for that hypothesis. Similarly, $\lambda$ determines when the target score is "losing." For more details, see [Ebadi et al. (2022)](https://arxiv.org/abs/2302.11837).
 
 ```{r bands-multiple}
 suppressPackageStartupMessages(library(bandsfdp))
@@ -96,7 +96,7 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
 
 ### Interpolated Bands
 
-By default, all bands are interpolated, which requires the computation of a running maximum (see [insert paper link] for more details). This generally results in a slightly tighter band, but at the cost of computational power. We recommend the use of `interpolate = TRUE`, unless it is too time-consuming. The code below shows an example using non-interpolated bands.
+By default, all bands are interpolated, which requires the computation of a running maximum. This generally results in a slightly tighter band, but at the cost of computational power. We recommend the use of `interpolate = TRUE`, unless it is too time-consuming. The code below shows an example using non-interpolated bands.
 
 ```{r bands-interpolation}
 suppressPackageStartupMessages(library(bandsfdp))

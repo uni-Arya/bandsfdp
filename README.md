@@ -8,9 +8,9 @@
 
 This package provides several different upper prediction bands on the
 FDP in the list of discoveries resulting from competition-based setups
-(see \[insert paper link\]). Such setups include target-decoy
-competition (TDC) in computational mass spectrometry and the knockoff
-construction in regression.
+(see [Ebadi et al. (2022)](https://arxiv.org/abs/2302.11837)). Such
+setups include target-decoy competition (TDC) in computational mass
+spectrometry and the knockoff construction in regression.
 
 The band provides an upper prediction bound on the FDP: given a
 rejection threshold returned by TDC, a list of target/decoy labels, and
@@ -120,7 +120,7 @@ the highest ranked score among all targets/decoys for that hypothesis.
 Similarly,
 ![\lambda](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clambda "\lambda")
 determines when the target score is “losing.” For more details, see
-\[insert paper link\].
+[Ebadi et al. (2022)](https://arxiv.org/abs/2302.11837).
 
 ``` r
 suppressPackageStartupMessages(library(bandsfdp))
@@ -151,11 +151,10 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
 ### Interpolated Bands
 
 By default, all bands are interpolated, which requires the computation
-of a running maximum (see \[insert paper link\] for more details). This
-generally results in a slightly tighter band, but at the cost of
-computational power. We recommend the use of `interpolate = TRUE`,
-unless it is too time-consuming. The code below shows an example using
-non-interpolated bands.
+of a running maximum. This generally results in a slightly tighter band,
+but at the cost of computational power. We recommend the use of
+`interpolate = TRUE`, unless it is too time-consuming. The code below
+shows an example using non-interpolated bands.
 
 ``` r
 suppressPackageStartupMessages(library(bandsfdp))
