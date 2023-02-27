@@ -56,8 +56,12 @@ data tables using `devtools::install_github("uni-Arya/fdpbandsdata")`.
 By default, each band assumes the use of a single decoy score, as in
 TDC. In this case, in addition to the `thresholds` and `labels`, one
 must specify the confidence parameter `gamma` (for a `1 - gamma`
-confidence level). For the standardized and uniform band, the value of
-`alpha` (the FDR tolerance) must also be specified.
+confidence level). Note that the functions currently support
+`gamma = 0.01, 0.025, 0.5, 0.1, 0.8, 0.5`, but more data can be
+generated using the source code available at
+[GitHub](https://github.com/uni-Arya/fdpbandsdata). For the standardized
+and uniform band, the value of `alpha` (the FDR tolerance) must also be
+specified.
 
 ``` r
 suppressPackageStartupMessages(library(bandsfdp))
@@ -143,8 +147,8 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   print(uniband(thresholds, labels, alpha, gamma, c, lambda))
   print(krband(thresholds, labels, gamma, c, lambda))
 }
-#> [1] 0.00800000 0.03991597 0.13921902 0.17156863
-#> [1] 0.01200000 0.03781513 0.12903226 0.16176471
+#> [1] 0.00800000 0.03991597 0.16298812 0.19444444
+#> [1] 0.01200000 0.03781513 0.15449915 0.18627451
 #> [1] 0.00800000 0.05042017 0.22750424 0.25653595
 ```
 
@@ -180,4 +184,61 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
 #> [1] 0.00800000 0.03991597 0.13921902 0.28267974
 #> [1] 0.01200000 0.03781513 0.12903226 0.26633987
 #> [1] 0.00800000 0.05252101 0.26146010 0.59967320
+```
+
+### Simultaneous FDP bounds
+
+Rather than compute a bound on the FDP in TDC’s list of discoveries, one
+may be interested in computing a bound on the FDP on the top
+![i](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;i "i")
+hypotheses for all
+![i = 1, \ldots, n =: \[n\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;i%20%3D%201%2C%20%5Cldots%2C%20n%20%3D%3A%20%5Bn%5D "i = 1, \ldots, n =: [n]"),
+where
+![n](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n "n")
+is the number of hypotheses (or for
+![i](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;i "i")
+in a subset of
+![\[n\]](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Bn%5D "[n]")).
+In this case, the function `simband()` may be used. This requires the
+following arguments:
+
+- The set of (ordered) `labels`, confidence parameter `gamma`,
+  parameters `c` and `lambda`, and a boolean `interpolate`, as described
+  in the previous sections.
+- A character argument `type` which is either `"stband"` or `"uniband"`,
+  specifying the type of band to be used to compute simultaneous FDP
+  bounds.
+- The set of desired `indices` (denoted by
+  ![i](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;i "i")
+  above).
+- The maximum number of decoy wins considered for the bands `d_max`
+  (defaults to `NULL`, in which case is automatically computed using
+  `max_fdp` below).
+- The maximum considered FDP for the simultaneous bands `max_fdp`
+  (defaults to `max_fdp = 0.5`).
+
+The arguments `d_max` and `max_fdp` control the rate at which the
+simultaneous bounds are increasing. We refer the reader to Section 3 of
+[Ebadi et al. (2022)](https://arxiv.org/abs/2302.11837) for more
+details. Note that `max_fdp` is the
+![\alpha](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Calpha "\alpha")
+used to calculate
+![d\_\infty](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;d_%5Cinfty "d_\infty").
+
+``` r
+suppressPackageStartupMessages(library(bandsfdp))
+set.seed(123)
+
+if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
+  set.seed(123)
+  labels <- c(
+    rep(1, 250),
+    sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.9, 0.1)),
+    sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.5, 0.5)),
+    sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.1, 0.9))
+  )
+  gamma <- 0.05
+  print(simband(labels, gamma, "stband", indices = c(100, 250, 500, 1000)))
+}
+#> [1] 0.05000000 0.02000000 0.09663866 0.29738562
 ```
