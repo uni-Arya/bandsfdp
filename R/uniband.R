@@ -115,8 +115,6 @@ uniband <- function(thresholds, labels,
       with_interpolation <- function(threshold) {
         if (threshold == 0) {
           0
-        } else if (decoy_fun(threshold) >= 5e4) {
-          1
         } else {
           (target_fun(threshold) - dbar(threshold)) /
             max(1, target_fun(threshold))
