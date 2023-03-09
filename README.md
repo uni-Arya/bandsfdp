@@ -6,15 +6,47 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-This package provides several different upper prediction bands on the
-FDP in the list of discoveries resulting from competition-based setups
-(see [Ebadi et al. (2022)](https://arxiv.org/abs/2302.11837)). Such
-setups include target-decoy competition (TDC) in computational mass
-spectrometry and the knockoff construction in regression.
+This package provides functions that compute upper prediction bounds on
+the FDP in competition-based setups (see [Ebadi et
+al. (2022)](https://arxiv.org/abs/2302.11837)). Such setups include
+target-decoy competition (TDC) in computational mass spectrometry and
+the knockoff construction in regression. Note we typically use the
+terminology of TDC throughout.
 
-The band provides an upper prediction bound on the FDP: given a
-rejection threshold returned by TDC, a list of target/decoy labels, and
-a desired confidence level $1 - \gamma$, these functions return a real number $\eta$ such that the FDP in the list of discoveries is $\leq \eta$ with probability $\geq 1 - \gamma$.
+In (single-decoy) TDC, each hypothesis is associated to a winning score
+and a label
+($1$
+for a target win and
+$-1$
+for a decoy win). Functions in this package assume that the hypotheses
+are ordered in decreasing order of winning scores (with ties broken at
+random).
+
+The functions `stband()` and `uniband()` give an upper prediction bound
+on the FDP in TDC’s discovery list. Given TDC’s rejection threshold, the
+target/decoy labels, and a desired confidence level
+$1-\gamma$,
+these functions return a real number
+$\eta$
+such that the FDP in the list of discoveries is
+$\leq eta$
+with probability
+$\geq 1 - \gamma$.
+
+The function `simband()` provides simultaneous bounds on the FDP. It
+computes an upper prediction bound on the top
+$k$
+hypotheses of TDC (the hypotheses of the
+$k$
+largest winning scores), for each
+$k = 1,\ldots,n$
+where
+$n$
+is the total number of hypotheses.
+
+Note that upper prediction bounds are derived from upper prediction
+bands. In particular, the bounds in this package are derived from the
+standardized band (SB) and uniform band (UB), hence the name “bandsfdp”.
 
 ## Installation
 
@@ -28,26 +60,38 @@ devtools::install_github("uni-Arya/bandsfdp")
 
 ## Usage
 
-The following inputs, pertaining to the competition-based procedure, are
-required:
+The standardized and uniform bands require pre-computed Monte Carlo
+statistics. These can be downloaded using
+`devtools::install_github("uni-Arya/fdpbandsdata")` (approximately
+81Mb). The user can also view the code used to generate these tables at
+[fdpbandsdata](https://github.com/uni-Arya/fdpbandsdata).
 
-1.  One, or several, rejection `thresholds` (the user may choose their own threshold(s) as well).
-2.  A list of `labels` ($-1$ for a decoy win, $1$ for a target win) that are ordered so the corresponding winning scores are decreasing.
+For `stband()` and `uniband()`, the following inputs are required:
 
-Note to compute the standardized band (`stband()`) and uniform band
-(`uniband()`), the user must download a set of pre-computed Monte-Carlo
-data tables using `devtools::install_github("uni-Arya/fdpbandsdata")`.
+1.  A vector of (non-negative integer valued) rejection `thresholds`.
+    Typically only one is used: the rejection threshold of TDC.
+2.  A vector of `labels`
+    ($-1$
+    for a decoy win,
+    $1$
+    for a target win) that are ordered so the corresponding winning
+    scores of TDC are decreasing.
+3.  A confidence parameter `gamma` (a number between 0 and 1), for a
+    `1 - gamma` confidence level. Note that the functions currently
+    support `gamma = 0.01, 0.025, 0.5, 0.1, 0.8, 0.5`, but more data can
+    be generated using the source code at
+    [fdpbandsdata](https://github.com/uni-Arya/fdpbandsdata).
+4.  The FDR tolerance `alpha` used in TDC (a number between 0 and 1).
 
-### With a Single Decoy Score (as in TDC)
+### With a Single Decoy Score
 
-By default, each band assumes the use of a single decoy score, as in
-TDC. In this case, in addition to the `thresholds` and `labels`, one
-must specify the confidence parameter `gamma` (for a `1 - gamma`
-confidence level). Note that the functions currently support
-`gamma = 0.01, 0.025, 0.5, 0.1, 0.8, 0.5`, but more data can be
-generated using the source code available at [GitHub](https://github.com/uni-Arya/fdpbandsdata). For the standardized
-and uniform band, the value of `alpha` (the FDR tolerance) must also be
-specified.
+Typically, TDC uses a single decoy score in its competition step. Hence,
+both `stband()` and `uniband()` assume this to be the case by default
+(the parameters `c` and `lambda` are both set to `0.5` by default).
+
+Below is an example of how to use these functions. Note that the
+`thresholds` are not representative of the actual rejection threshold of
+TDC.
 
 ``` r
 suppressPackageStartupMessages(library(bandsfdp))
@@ -66,20 +110,58 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   
   print(stband(thresholds, labels, alpha, gamma))
   print(uniband(thresholds, labels, alpha, gamma))
-  print(krband(thresholds, labels, gamma))
 }
 #> [1] 0.02000000 0.09453782 0.26825127 0.29575163
 #> [1] 0.02400000 0.08823529 0.26315789 0.29084967
-#> [1] 0.0160000 0.2184874 0.3684211 0.3921569
 ```
 
 ### With Multiple Decoy Scores
 
-For competition-based setups that utilizes multiple decoys, one must
-specify two additional parameters $c \leq \lambda$ of the form $k/(d+1)$ where $d$ is the number of decoy scores used for each hypothesis and $1 \leq k \leq d$ is an integer.
+TDC can be extended to use multiple decoys. In that setup, the target
+score is competed with multiple decoy scores and the rank of the target
+score after competition is used to determine whether the hypothesis is a
+target win (label =
+$1$),
+decoy win
+($-1$)
+or uncounted
+($0$).
+The top `c` proportion of ranks are considered winning, the bottom
+`1-lambda` losing, and all the rest uncounted. The parameters `c` and
+`lambda` must satisfy the following conditions:
 
-For example, if we use $3$ decoy scores for each hypothesis, we may take
-$c$ and $\lambda$ to be $1/4$, $1/2$, or $3/4$, subject to $c \leq \lambda$. Briefly, the value of $c$ determines the ranks in which the target score is considered “winning.” E.g., if $c = 1/4$, $H_i$ is labelled as a target win whenever its corresponding target score is the highest ranked score among all targets/decoys for that hypothesis. Similarly, $\lambda$ determines when the target score is “losing.” For more details, see [Ebadi et al. (2022)](https://arxiv.org/abs/2302.11837).
+1.  $c \leq \lambda$
+2.  $c$
+    and
+    $\lambda$
+    are of the form
+    $k/(d+1)$
+    where
+    $d$
+    is the number of decoys used and
+    $1 \leq k \leq d$
+    is an integer.
+
+As an example, if we use
+$3$
+decoy scores for each hypothesis, we may take
+$c$
+and
+$\lambda$
+to be one of
+$1/4$,
+$1/2$,
+or
+$3/4$,
+subject to
+$c \leq \lambda$.
+For instance, if
+$c = 1/4$,
+$H_i$
+is labelled as a target win whenever its corresponding target score is
+the highest ranked score among all decoys for that hypothesis.
+
+Below is an illustrative example of such a use.
 
 ``` r
 suppressPackageStartupMessages(library(bandsfdp))
@@ -100,20 +182,20 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   
   print(stband(thresholds, labels, alpha, gamma, c, lambda))
   print(uniband(thresholds, labels, alpha, gamma, c, lambda))
-  print(krband(thresholds, labels, gamma, c, lambda))
 }
 #> [1] 0.00800000 0.03991597 0.16298812 0.19444444
 #> [1] 0.01200000 0.03781513 0.15449915 0.18627451
-#> [1] 0.00800000 0.05042017 0.22750424 0.25653595
 ```
 
 ### Interpolated Bands
 
-By default, all bands are interpolated, which requires the computation
-of a running maximum. This generally results in a slightly tighter band,
+All bands are interpolated by default, which requires the computation of
+a running maximum. This generally results in a slightly tighter bound,
 but at the cost of computational power. We recommend the use of
-`interpolate = TRUE`, unless it is too time-consuming. The code below
-shows an example using non-interpolated bands.
+`interpolate = TRUE`, unless it is too time-consuming.
+
+If one wishes to use non-interpolated bands, the code below shows an
+example of such a use.
 
 ``` r
 suppressPackageStartupMessages(library(bandsfdp))
@@ -134,35 +216,42 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   
   print(stband(thresholds, labels, alpha, gamma, c, lambda, interpolate = FALSE))
   print(uniband(thresholds, labels, alpha, gamma, c, lambda, interpolate = FALSE))
-  print(krband(thresholds, labels, gamma, c, lambda, interpolate = FALSE))
 }
 #> [1] 0.00800000 0.03991597 0.13921902 0.28267974
 #> [1] 0.01200000 0.03781513 0.12903226 0.26633987
-#> [1] 0.00800000 0.05252101 0.26146010 0.59967320
 ```
 
 ### Simultaneous FDP bounds
 
-Rather than compute a bound on the FDP in TDC’s list of discoveries, one
-may be interested in computing a bound on the FDP on the top $i$ hypotheses for all $i = 1, \ldots, n$ (or a smaller set of $i$), where $n$ is the number of hypotheses. In this case, the function `simband()` may be used. This requires the following arguments:
+One may also be interested in computing a bound on the FDP among the top
+$k$
+hypotheses for all
+$k = 1, \ldots, n$,
+where
+$n$
+is the total number of hypotheses. In this case, the function
+`simband()` should be used. This function requires the following
+arguments:
 
-- The set of (ordered) `labels`, confidence parameter `gamma`,
-  parameters `c` and `lambda`, and a boolean `interpolate`, as described
-  in the previous sections.
+- A vector of (ordered) `labels`, confidence parameter `gamma`, and
+  competition parameters `c` and `lambda`, as described in the previous
+  sections.
 - A character argument `type` which is either `"stband"` or `"uniband"`,
-  specifying the type of band to be used to compute simultaneous FDP
+  specifying the type of band to be used to compute the simultaneous FDP
   bounds.
-- The set of desired `indices` (denoted by $i$ above).
 - The maximum number of decoy wins considered for the bands `d_max`
-  (defaults to `NULL`, in which case is automatically computed using
+  (defaults to `NULL`, in which case it is automatically computed using
   `max_fdp` below).
-- The maximum considered FDP for the simultaneous bands `max_fdp`
+- The maximal considered FDP for the simultaneous bounds `max_fdp`
   (defaults to `max_fdp = 0.5`).
 
 The arguments `d_max` and `max_fdp` control the rate at which the
-simultaneous bounds are increasing. We refer the reader to Section 3 of
-[Ebadi et al. (2022)](https://arxiv.org/abs/2302.11837) for more
-details. Note that `max_fdp` is the $\alpha$ used to calculate $d_\infty$.
+simultaneous bounds are increasing. More information is written in the
+details section of the R documentation of `simband()`. We also refer the
+reader to Section 3 of [Ebadi et
+al. (2022)](https://arxiv.org/abs/2302.11837) for more details.
+
+Below is an example of such a use of the function.
 
 ``` r
 suppressPackageStartupMessages(library(bandsfdp))
@@ -177,7 +266,7 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
     sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.1, 0.9))
   )
   gamma <- 0.05
-  print(simband(labels, gamma, "stband", indices = c(100, 250, 500, 1000)))
+  head(simband(labels, gamma, type = "stband"))
 }
-#> [1] 0.05000000 0.02000000 0.09663866 0.29738562
+#> [1] 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 0.8333333
 ```
