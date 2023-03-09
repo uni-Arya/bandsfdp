@@ -48,7 +48,7 @@
 #' for a non-trivial bound. In particular, if the user inputs a vector of
 #' \code{thresholds}, a bound is returned for each element of
 #' \code{thresholds} using the same d_max. For more details, see:
-#' <arXiv:2302.11837>.
+#' <https://arxiv.org/abs/2302.11837>.
 #'
 #' We recommend the use of \code{interpolate = TRUE} (default), as it generally
 #' results in a tighter bound. This comes at the cost of performance: the bound
@@ -76,7 +76,7 @@
 #' }
 #'
 #' @references Ebadi et al. (2022), Bounding the FDP in competition-based
-#' control of the FDR <arXiv:2302.11837>.
+#' control of the FDR <https://arxiv.org/abs/2302.11837>.
 uniband <- function(thresholds, labels,
                     alpha, gamma,
                     c = 0.5, lambda = 0.5,

@@ -48,9 +48,9 @@
 #' increase: a larger \code{d_max} results in a more conservative bound.
 #' If, however, \eqn{D_k + 1} exceeds \code{d_max} for some index \eqn{k}, each target
 #' win thereafter is considered a false discovery when computing the bound.
-#' Thus it is important that \code{d_max}, chosen apriori, is large enough. Given
+#' Thus it is important that \code{d_max}, chosen a priori, is large enough. Given
 #' it is sufficiently large, the precise value of \code{d_max} does not have a
-#' significant effect on the resulting bounds (see <arXiv:2302.11837> for more details).
+#' significant effect on the resulting bounds (see <https://arxiv.org/abs/2302.11837> for more details).
 #'
 #' We recommend setting \code{d_max = NULL} so that it is computed automatically
 #' using \code{max_fdp}. This argument ensures that \eqn{D_k + 1} never
@@ -76,7 +76,7 @@
 #' }
 #'
 #' @references Ebadi et al. (2022), Bounding the FDP in competition-based
-#' control of the FDR <arXiv:2302.11837>.
+#' control of the FDR <https://arxiv.org/abs/2302.11837>.
 simband <- function(labels, gamma, type,
                     d_max = NULL, max_fdp = 0.5,
                     c = 0.5, lambda = 0.5) {

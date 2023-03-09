@@ -1,38 +1,18 @@
 Package: bandsfdp
-Title: A package to compute upper prediction bounds on the FDP in 
-  competition-based setups, such as TDC and the Knockoff Filter
+Title: A Package to Compute Upper Prediction Bounds on the FDP in 
+  Competition-Based Setups
 Version: 1.0.0
 Authors@R: c(
-    person(
-      "Arya", "Ebadi",
-      email = "aeba3842@uni.sydney.edu.au", 
-      role  = c("aut", "cre")
-    ),
-    person(
-      "Dong", "Luo",
-      email = "dluo7139@uni.sydney.edu.au",
-      role  = "aut"
-    ),
-    person(
-      "Jack", "Freestone",
-      email = "jfre0619@uni.sydney.edu.au",
-      role  = "aut"
-    ),
-    person(
-      "William Stafford", "Noble",
-      email = "william-noble@uw.edu",
-      role  = "aut"
-    ),
-    person(
-      "Uri", "Keich",
-      email   = "uri.keich@sydney.edu.au",
-      role    = "aut",
-      comment = c(ORCID = "0000-0002-3209-5011")
-    )
+    person("Arya", "Ebadi", , "aeba3842@uni.sydney.edu.au", role = c("aut", "cre")),
+    person("Dong", "Luo", , "dluo7139@uni.sydney.edu.au", role = "aut"),
+    person("Jack", "Freestone", , "jfre0619@uni.sydney.edu.au", role = "aut"),
+    person("William Stafford", "Noble", , "william-noble@uw.edu", role = "aut"),
+    person("Uri", "Keich", , "uri.keich@sydney.edu.au", role = "aut",
+           comment = c(ORCID = "0000-0002-3209-5011"))
   )
 Suggests: fdpbandsdata
 Additional_repositories: https://github.com/uni-Arya/fdpbandsdata
-Description: This package contains functions that calculate upper prediction 
+Description: Implements functions that calculate upper prediction 
   bounds on the false discovery proportion (FDP) in the list of discoveries 
   returned by competition-based setups, implementing Ebadi et al. (2022)
   <arXiv:2302.11837>. Such setups include target-decoy competition (TDC) 
