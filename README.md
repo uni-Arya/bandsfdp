@@ -266,7 +266,7 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
     sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.1, 0.9))
   )
   gamma <- 0.05
-  head(simband(labels, gamma, type = "stband"))
+  simband(labels, gamma, type = "stband")[700:706]
 }
-#> [1] 1.0000000 1.0000000 1.0000000 1.0000000 1.0000000 0.8333333
+#> [1] 0.2402827 0.2416226 0.2416226 0.2416226 0.2416226 0.2416226 0.2429577
 ```
