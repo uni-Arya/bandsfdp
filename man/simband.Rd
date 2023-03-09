@@ -2,14 +2,12 @@
 % Please edit documentation in R/simband.R
 \name{simband}
 \alias{simband}
-\title{Calculate simultaneous FDP bounds given a set of ordered labels resulting
-from TDC.}
+\title{Simultaneous Band}
 \usage{
 simband(
   labels,
   gamma,
   type,
-  indices = 1:length(labels),
   d_max = NULL,
   max_fdp = 0.5,
   c = 0.5,
@@ -18,43 +16,75 @@ simband(
 )
 }
 \arguments{
-\item{labels}{A vector of (ordered) labels resulting from TDC.}
+\item{labels}{A vector of (ordered) labels. See details below.}
 
-\item{gamma}{The confidence level of the band. Typical values include
+\item{gamma}{The confidence parameter of the band. Typical values include
 \code{gamma = 0.05} or \code{gamma = 0.01}.}
 
 \item{type}{A character string specifying which band to use. Must be one of
-"stband" or "uniband".}
-
-\item{indices}{A vector of indices of (ordered) hypotheses associated to TDC.
-Defaults to \code{1:n}, where \code{n} is the number of hypotheses.}
+\code{"stband"} or \code{"uniband"}.}
 
 \item{d_max}{An optional positive integer specifying the maximum number
 of decoy wins considered in calculating the bands.}
 
 \item{max_fdp}{A number specifying the maximum FDP considered by the user in
-calculating the bands. Used to compute dmax if dmax is set to NULL.}
+calculating the bands. Used to compute \code{d_max} if \code{d_max} is
+set to \code{NULL}.}
 
 \item{c}{Determines the ranks of the target score that are considered
-winning. Defaults to \code{c = 0.5} for TDC.}
+winning. Defaults to \code{c = 0.5} for (single-decoy) TDC.}
 
 \item{lambda}{Determines the ranks of the target score that are
-considered losing. Defaults to \code{lambda = 0.5} for TDC.}
-
-\item{interpolate}{A boolean indicating whether the bands should be
-interpolated. Offers a slight boost in performance at the cost of computing
-power. Defaults to \code{TRUE}.}
+considered losing. Defaults to \code{lambda = 0.5} for (single-decoy) TDC.}
 }
 \value{
-A vector of upper prediction bounds on the FDP for each of the
-specified indices.
+A vector of upper prediction bounds on the FDP in the top \eqn{k}
+hypotheses for each \eqn{k = 1,\ldots,n} where \eqn{n} is the number of
+hypotheses.
 }
 \description{
-In TDC, each hypothesis is attached to a winning score and a label (1 for a
-target win and -1 for a decoy win). \code{simband()} assumes that the
-hypotheses are ordered in decreasing order of winning scores (breaking
-ties at random). In particular, the argument \code{labels} is ordered
-according to this rule.
+This function computes upper prediction bounds on the top \eqn{k}
+hypotheses of TDC, for each \eqn{k = 1,\ldots,n} where \eqn{n} is the total
+number of hypotheses.
+}
+\details{
+In (single-decoy) TDC, each hypothesis is associated to a
+winning score and a label (1 for a target win, -1 for a decoy win). This
+function assumes that the hypotheses are ordered in decreasing order of
+winning scores (with ties broken at random). The argument \code{labels},
+therefore, must be ordered according to this rule.
+
+This function also supports the extension of TDC that uses multiple
+decoys. In that setup, the target score is competed with multiple decoy
+scores and the rank of the target score after competition is used to determine whether the
+hypothesis is a target win (label = 1), decoy win (-1) or uncounted (0).
+The top \code{c} proportion of ranks are considered winning, the bottom
+\code{1-lambda} losing, and all the rest uncounted.
+
+The threshold of TDC is given by the formula (assuming hypotheses are ordered):
+\deqn{\max\{k : \frac{D_k + 1}{T_k \vee 1} \cdot \frac{c}{1-\lambda} \leq \alpha\}}{%
+max{k : (D_k + 1)/max(T_k, 1) \le (1-\lambda)\alpha/c}}
+where \eqn{T_k} is the number of target wins among the top
+\eqn{k} hypotheses, and \eqn{D_k} is the number of decoy wins similarly.
+
+The argument \code{gamma} sets a confidence level of \code{1-gamma}. Both
+the uniform and standardized bands require pre-computed Monte Carlo
+statistics, so only certain values of \code{gamma} are available to use.
+Commonly used confidence levels, like 0.95 and 0.99, are available.
+We refer the reader to the README of this package for more details.
+
+The argument \code{d_max} controls the rate at which the returned bounds
+increase: a larger \code{d_max} results in a more conservative bound.
+If, however, \eqn{D_k + 1} exceeds \code{d_max} for some index \eqn{k}, each target
+win thereafter is considered a false discovery when computing the bound.
+Thus it is important that \code{d_max}, chosen apriori, is large enough. Given
+it is sufficiently large, the precise value of \code{d_max} does not have a
+significant effect on the resulting bounds (see \url{arXiv:2302.11837} for more details).
+
+We recommend setting \code{d_max = NULL} so that it is computed automatically
+using \code{max_fdp}. This argument ensures that \eqn{D_k + 1} never
+exceeds \code{d_max} when the (non-interpolated) FDP bound on the top
+\eqn{k} hypotheses is less than \code{max_fdp}.
 }
 \examples{
 if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
@@ -66,6 +96,11 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
     sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.1, 0.9))
   )
   gamma <- 0.05
-  simband(labels, gamma, "stband", indices = c(100, 250, 500, 1000))
+  head(simband(labels, gamma, "stband"))
 }
+
+}
+\references{
+Ebadi et al. (2022), Bounding the FDP in competition-based
+control of the FDR \url{arXiv:2302.11837}.
 }

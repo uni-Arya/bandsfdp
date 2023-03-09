@@ -2,7 +2,7 @@
 % Please edit documentation in R/stband.R
 \name{stband}
 \alias{stband}
-\title{Calculate the standardized band on TDC's list of discoveries}
+\title{Standardized Band}
 \usage{
 stband(
   thresholds,
@@ -16,20 +16,21 @@ stband(
 )
 }
 \arguments{
-\item{thresholds}{A vector of rejection thresholds resulting from TDC.}
+\item{thresholds}{The rejection threshold of TDC. If given as
+a vector, an upper prediction bound is returned for each element.}
 
-\item{labels}{A vector of (ordered) labels resulting from TDC.}
+\item{labels}{A vector of (ordered) labels. See details below.}
 
 \item{alpha}{The FDR threshold.}
 
-\item{gamma}{The confidence level of the band. Typical values include
+\item{gamma}{The confidence parameter of the bound. Typical values include
 \code{gamma = 0.05} or \code{gamma = 0.01}.}
 
 \item{c}{Determines the ranks of the target score that are considered
-winning. Defaults to \code{c = 0.5} for TDC.}
+winning. Defaults to \code{c = 0.5} for (single-decoy) TDC.}
 
 \item{lambda}{Determines the ranks of the target score that are
-considered losing. Defaults to \code{lambda = 0.5} for TDC.}
+considered losing. Defaults to \code{lambda = 0.5} for (single-decoy) TDC.}
 
 \item{n}{The number of hypotheses. Defaults to the length of \code{labels}.}
 
@@ -38,15 +39,51 @@ interpolated. Offers a slight boost in performance at the cost of computing
 power. Defaults to \code{TRUE}.}
 }
 \value{
-A vector of upper prediction bounds on the FDP for each rejection
-threshold.
+An upper prediction bound on the FDP in TDC's list of discoveries.
+If \code{thresholds} is a vector, returns an upper prediction bound for each
+element of \code{thresholds}.
 }
 \description{
-In TDC, each hypothesis is attached to a winning score and a label (1 for a
-target win and -1 for a decoy win). \code{stband()} assumes that the
-hypotheses are ordered in decreasing order of winning scores (breaking
-ties at random). In particular, the argument \code{labels} is ordered
-according to this rule.
+This function computes an upper prediction bound, derived from the
+standardized band, on the FDP in TDC's list of discoveries.
+}
+\details{
+In (single-decoy) TDC, each hypothesis is associated to a
+winning score and a label (1 for a target win, -1 for a decoy win). This
+function assumes that the hypotheses are ordered in decreasing order of
+winning scores (with ties broken at random). The argument \code{labels},
+therefore, must be ordered according to this rule.
+
+This function also supports the extension of TDC that uses multiple
+decoys. In that setup, the target score is competed with multiple decoy
+scores and the rank of the target score after competition is used to determine whether the
+hypothesis is a target win (label = 1), decoy win (-1) or uncounted (0).
+The top \code{c} proportion of ranks are considered winning, the bottom
+\code{1-lambda} losing, and all the rest uncounted.
+
+The threshold of TDC is given by the formula:
+\deqn{\max\{k : \frac{D_k + 1}{T_k \vee 1} \cdot \frac{c}{1-\lambda} \leq \alpha\}}{%
+max{k : (D_k + 1)/max(T_k, 1) \le (1-\lambda)\alpha/c}}
+where \eqn{T_k} is the number of target wins among the top
+\eqn{k} hypotheses, and \eqn{D_k} is the number of decoy wins similarly.
+
+The argument \code{gamma} sets a confidence level of \code{1-gamma}. Since
+the standardized band requires pre-computed Monte Carlo quantiles, only
+certain values of \code{gamma} are available to use. Commonly used
+confidence levels, like 0.95 and 0.99, are available. We refer the reader
+to the README of this package for more details.
+
+The argument \code{alpha}, used to compute the threshold of TDC, is also
+used in this function. It serves to compute an appropriate d_max
+for a non-trivial bound. In particular, if the user inputs a vector of
+\code{thresholds}, a bound is returned for each element of
+\code{thresholds} using the same d_max. For more details, see:
+\url{arXiv:2302.11837}.
+
+We recommend the use of \code{interpolate = TRUE} (default), as it generally
+results in a tighter bound. This comes at the cost of performance: the bound
+for each threshold is computed in O(n) time with interpolation and O(1)
+without.
 }
 \examples{
 if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
@@ -62,4 +99,9 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   gamma <- 0.05
   stband(thresholds, labels, alpha, gamma)
 }
+
+}
+\references{
+Ebadi et al. (2022), Bounding the FDP in competition-based
+control of the FDR \url{arXiv:2302.11837}.
 }
