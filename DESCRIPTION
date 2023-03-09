@@ -1,6 +1,6 @@
 Package: bandsfdp
-Title: A collection of upper prediction bands on the FDP in TDC's list of 
-  discoveries
+Title: A package to compute upper prediction bounds on the FDP in 
+  competition-based setups, such as TDC and the Knockoff Filter.
 Version: 1.0.0
 Authors@R: c(
     person(
@@ -11,6 +11,11 @@ Authors@R: c(
     person(
       "Dong", "Luo",
       email = "dluo7139@uni.sydney.edu.au",
+      role  = "aut"
+    ),
+    person(
+      "Jack", "Freestone",
+      email = "jfre0619@uni.sydney.edu.au",
       role  = "aut"
     ),
     person(
@@ -28,12 +33,13 @@ Authors@R: c(
 Suggests: fdpbandsdata
 Additional_repositories: https://github.com/uni-Arya/fdpbandsdata
 Description: This package contains functions that calculate upper prediction 
-  bands on the false discovery proportion (FDP) in the list of discoveries 
+  bounds on the false discovery proportion (FDP) in the list of discoveries 
   returned by competition-based setups, implementing Ebadi et al. (2022)
   <arXiv:2302.11837>. Such setups include target-decoy competition (TDC) 
   in computational mass spectrometry and the knockoff construction in linear 
-  regression. Included is the standardized band (TDC-SB), uniform band (TDC-UB) 
-  and the band of Katsevich-Ramdas (2018) <arXiv:1803.06790> (TDC-KR).
+  regression (note this package typically uses the terminology of TDC). Included 
+  is the standardized (TDC-SB) and uniform (TDC-UB) bound on TDC's FDP, as
+  well as the simultaneous standardized and uniform bands.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
