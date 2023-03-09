@@ -79,8 +79,7 @@
 #' control of the FDR <arXiv:2302.11837>.
 simband <- function(labels, gamma, type,
                     d_max = NULL, max_fdp = 0.5,
-                    c = 0.5, lambda = 0.5,
-                    interpolate = TRUE) {
+                    c = 0.5, lambda = 0.5) {
   if (!type %in% c("stband", "uniband")) {
     stop("Invalid type argument in simband().")
   }

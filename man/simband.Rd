@@ -11,8 +11,7 @@ simband(
   d_max = NULL,
   max_fdp = 0.5,
   c = 0.5,
-  lambda = 0.5,
-  interpolate = TRUE
+  lambda = 0.5
 )
 }
 \arguments{
