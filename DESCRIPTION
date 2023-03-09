@@ -1,6 +1,6 @@
 Package: bandsfdp
 Title: A package to compute upper prediction bounds on the FDP in 
-  competition-based setups, such as TDC and the Knockoff Filter.
+  competition-based setups, such as TDC and the Knockoff Filter
 Version: 1.0.0
 Authors@R: c(
     person(
