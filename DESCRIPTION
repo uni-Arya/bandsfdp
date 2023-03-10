@@ -11,15 +11,18 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-3209-5011"))
   )
 Suggests: fdpbandsdata
-Additional_repositories: https://github.com/uni-Arya/fdpbandsdata
 Description: Implements functions that calculate upper prediction 
   bounds on the false discovery proportion (FDP) in the list of discoveries 
   returned by competition-based setups, implementing Ebadi et al. (2022)
   <arXiv:2302.11837>. Such setups include target-decoy competition (TDC) 
   in computational mass spectrometry and the knockoff construction in linear 
   regression (note this package typically uses the terminology of TDC). Included 
-  is the standardized (TDC-SB) and uniform (TDC-UB) bound on TDC's FDP, as
-  well as the simultaneous standardized and uniform bands.
+  is the standardized (TDC-SB) and uniform (TDC-UB) bound on TDC's FDP, and the 
+  simultaneous standardized and uniform bands. Note this package requires 
+  pre-computed Monte Carlo statistics available at 
+  <https://github.com/uni-Arya/fdpbandsdata>. This data can be downloaded by
+  running the command `devtools::install_github("uni-Arya/fdpbandsdata")` in R
+  and restarting R after installation. The size of this data is roughly 81Mb.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
