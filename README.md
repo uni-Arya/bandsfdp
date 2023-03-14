@@ -29,7 +29,7 @@ $1-\gamma$,
 these functions return a real number
 $\eta$
 such that the FDP in the list of discoveries is
-$\leq eta$
+$\leq \eta$
 with probability
 $\geq 1 - \gamma$.
 
