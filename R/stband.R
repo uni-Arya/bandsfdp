@@ -182,3 +182,6 @@ stband <- function(thresholds, labels,
     )
   }
 }
+
+#' @rdname stband
+tdc_sb <- stband

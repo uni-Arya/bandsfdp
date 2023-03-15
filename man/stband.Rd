@@ -2,9 +2,21 @@
 % Please edit documentation in R/stband.R
 \name{stband}
 \alias{stband}
+\alias{tdc_sb}
 \title{Standardized Band}
 \usage{
 stband(
+  thresholds,
+  labels,
+  alpha,
+  gamma,
+  c = 0.5,
+  lambda = 0.5,
+  n = length(labels),
+  interpolate = TRUE
+)
+
+tdc_sb(
   thresholds,
   labels,
   alpha,

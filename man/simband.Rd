@@ -2,9 +2,20 @@
 % Please edit documentation in R/simband.R
 \name{simband}
 \alias{simband}
+\alias{sim_bound}
 \title{Simultaneous Band}
 \usage{
 simband(
+  labels,
+  gamma,
+  type,
+  d_max = NULL,
+  max_fdp = 0.5,
+  c = 0.5,
+  lambda = 0.5
+)
+
+sim_bound(
   labels,
   gamma,
   type,

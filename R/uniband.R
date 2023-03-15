@@ -189,3 +189,6 @@ uniband <- function(thresholds, labels,
     )
   }
 }
+
+#' @rdname uniband
+tdc_ub <- uniband

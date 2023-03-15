@@ -2,9 +2,21 @@
 % Please edit documentation in R/uniband.R
 \name{uniband}
 \alias{uniband}
+\alias{tdc_ub}
 \title{Uniform Band}
 \usage{
 uniband(
+  thresholds,
+  labels,
+  alpha,
+  gamma,
+  c = 0.5,
+  lambda = 0.5,
+  n = length(labels),
+  interpolate = TRUE
+)
+
+tdc_ub(
   thresholds,
   labels,
   alpha,

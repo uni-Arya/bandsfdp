@@ -270,3 +270,6 @@ simband <- function(labels, gamma, type,
     )
   }
 }
+
+#' @rdname simband
+sim_bound <- simband
