@@ -1,6 +1,5 @@
 Package: bandsfdp
-Title: A Package to Compute Upper Prediction Bounds on the FDP in 
-  Competition-Based Setups
+Title: Compute Upper Prediction Bounds on the FDP in Competition-Based Setups
 Version: 1.0.0
 Authors@R: c(
     person("Arya", "Ebadi", , "aeba3842@uni.sydney.edu.au", role = c("aut", "cre")),
@@ -18,10 +17,10 @@ Description: Implements functions that calculate upper prediction
   in computational mass spectrometry and the knockoff construction in linear 
   regression (note this package typically uses the terminology of TDC). Included 
   is the standardized (TDC-SB) and uniform (TDC-UB) bound on TDC's FDP, and the 
-  simultaneous standardized and uniform bands. Note this package requires 
+  simultaneous standardized and uniform bands. Requires 
   pre-computed Monte Carlo statistics available at 
   <https://github.com/uni-Arya/fdpbandsdata>. This data can be downloaded by
-  running the command `devtools::install_github("uni-Arya/fdpbandsdata")` in R
+  running the command 'devtools::install_github("uni-Arya/fdpbandsdata")' in R
   and restarting R after installation. The size of this data is roughly 81Mb.
 License: MIT + file LICENSE
 Encoding: UTF-8
