@@ -15,26 +15,27 @@ terminology of TDC throughout.
 
 In (single-decoy) TDC, each hypothesis is associated to a winning score
 and a label
-($1$)
+($1$
 for a target win and
-$-1$)
+$-1$
 for a decoy win). Functions in this package assume that the hypotheses
 are ordered in decreasing order of winning scores (with ties broken at
 random).
 
-The functions `stband()` and `uniband()` give an upper prediction bound
+The functions `tdc_sb()` and `tdc_ub()` give an upper prediction bound
 on the FDP in TDC’s discovery list. Given TDC’s rejection threshold, the
 target/decoy labels, and a desired confidence level
 $1 - \gamma$,
 these functions return a real number
-$\eta$
+$[\eta$
 such that the FDP in the list of discoveries is
 $\leq \eta$
 with probability
 $\geq 1 - \gamma$.
 
-The function `simband()` provides simultaneous bounds on the FDP. It
-computes an upper prediction bound on the top
+The function `sim_bound()` provides simultaneous bounds on the FDP. It
+computes an upper prediction bound on the FDP of target wins among the
+top
 $k$
 hypotheses of TDC (the hypotheses of the
 $k$
@@ -42,7 +43,10 @@ largest winning scores), for each
 $k = 1,\ldots,n$
 where
 $n$
-is the total number of hypotheses.
+is the total number of hypotheses. Similarly, the function `gen_bound()`
+provides a bound on the FDP among target wins in an arbitrary set
+$R$
+of hypotheses of TDC.
 
 Note that upper prediction bounds are derived from upper prediction
 bands. In particular, the bounds in this package are derived from the
@@ -66,14 +70,14 @@ statistics. These can be downloaded using
 81Mb). The user can also view the code used to generate these tables at
 [fdpbandsdata](https://github.com/uni-Arya/fdpbandsdata).
 
-For `stband()` and `uniband()`, the following inputs are required:
+For `tdc_sb()` and `tdc_ub()`, the following inputs are required:
 
 1.  A vector of (non-negative integer valued) rejection `thresholds`.
     Typically only one is used: the rejection threshold of TDC.
 2.  A vector of `labels`
-    ($-1$
+    (![-1](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;-1 "-1")
     for a decoy win,
-    $1$
+    ![1](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;1 "1")
     for a target win) that are ordered so the corresponding winning
     scores of TDC are decreasing.
 3.  A confidence parameter `gamma` (a number between 0 and 1), for a
@@ -86,7 +90,7 @@ For `stband()` and `uniband()`, the following inputs are required:
 ### With a Single Decoy Score
 
 Typically, TDC uses a single decoy score in its competition step. Hence,
-both `stband()` and `uniband()` assume this to be the case by default
+both `tdc_sb()` and `tdc_ub()` assume this to be the case by default
 (the parameters `c` and `lambda` are both set to `0.5` by default).
 
 Below is an example of how to use these functions. Note that the
@@ -108,8 +112,8 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   alpha <- 0.05
   gamma <- 0.05
   
-  print(stband(thresholds, labels, alpha, gamma))
-  print(uniband(thresholds, labels, alpha, gamma))
+  print(tdc_sb(thresholds, labels, alpha, gamma))
+  print(tdc_ub(thresholds, labels, alpha, gamma))
 }
 #> [1] 0.02000000 0.09453782 0.26825127 0.29575163
 #> [1] 0.02400000 0.08823529 0.26315789 0.29084967
@@ -180,8 +184,8 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   c <- 0.25
   lambda <- 0.25
   
-  print(stband(thresholds, labels, alpha, gamma, c, lambda))
-  print(uniband(thresholds, labels, alpha, gamma, c, lambda))
+  print(tdc_sb(thresholds, labels, alpha, gamma, c, lambda))
+  print(tdc_ub(thresholds, labels, alpha, gamma, c, lambda))
 }
 #> [1] 0.00800000 0.03991597 0.16298812 0.19444444
 #> [1] 0.01200000 0.03781513 0.15449915 0.18627451
@@ -214,23 +218,24 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   c <- 0.25
   lambda <- 0.25
   
-  print(stband(thresholds, labels, alpha, gamma, c, lambda, interpolate = FALSE))
-  print(uniband(thresholds, labels, alpha, gamma, c, lambda, interpolate = FALSE))
+  print(tdc_sb(thresholds, labels, alpha, gamma, c, lambda, interpolate = FALSE))
+  print(tdc_ub(thresholds, labels, alpha, gamma, c, lambda, interpolate = FALSE))
 }
-#> [1] 0.00800000 0.03991597 0.13921902 0.28267974
-#> [1] 0.01200000 0.03781513 0.12903226 0.26633987
+#> [1] 0.00800000 0.03991597 1.00000000 1.00000000
+#> [1] 0.01200000 0.03781513 1.00000000 1.00000000
 ```
 
 ### Simultaneous FDP bounds
 
-One may also be interested in computing a bound on the FDP among the top
+One may also be interested in computing a bound on the FDP of target
+wins among the top
 $k$
 hypotheses for all
 $k = 1, \ldots, n$,
 where
 $n$
 is the total number of hypotheses. In this case, the function
-`simband()` should be used. This function requires the following
+`sim_bound()` should be used. This function requires the following
 arguments:
 
 - A vector of (ordered) `labels`, confidence parameter `gamma`, and
@@ -247,8 +252,8 @@ arguments:
 
 The arguments `d_max` and `max_fdp` control the rate at which the
 simultaneous bounds are increasing. More information is written in the
-details section of the R documentation of `simband()`. We also refer the
-reader to Section 3 of [Ebadi et
+details section of the R documentation of `sim_bound()`. We also refer
+the reader to Section 3 of [Ebadi et
 al. (2022)](https://arxiv.org/abs/2302.11837) for more details.
 
 Below is an example of such a use of the function.
@@ -266,7 +271,7 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
     sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.1, 0.9))
   )
   gamma <- 0.05
-  simband(labels, gamma, type = "stband")[700:706]
+  sim_bound(labels, gamma, type = "stband")[700:706]
 }
 #> [1] 0.2402827 0.2416226 0.2416226 0.2416226 0.2416226 0.2416226 0.2429577
 ```
@@ -274,11 +279,11 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
 ### Generalized FDP bounds
 
 One may be interested in computing an upper prediction bound on the FDP
-among an arbitrary set
+among target wins in an arbitrary set
 $R$
-of hypotheses. In this case, the function `genband()` should be used.
-Here, one uses the same arguments as in `simband()`, with an additional
-argument `indices` that specifies the set of indices
+of hypotheses. In this case, the function `gen_bound()` should be used.
+Here, one uses the same arguments as in `sim_bound()`, with an
+additional argument `indices` that specifies the set of indices
 $R$
 for which to compute the upper prediction bound over.
 
@@ -298,7 +303,7 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   )
   indices <- c(1:100, 300:400, 600:650)
   gamma <- 0.05
-  genband(labels, indices, gamma, type = "stband")
+  gen_bound(labels, indices, gamma, type = "stband")
 }
 #> [1] 0.2546296
 ```

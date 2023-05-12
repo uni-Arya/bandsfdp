@@ -1,7 +1,7 @@
 #' Generalized band
 #'
-#' This function computes an upper prediction bound on the FDP on any set
-#' \eqn{R} of hypotheses of TDC. See details for more information.
+#' This function computes an upper prediction bound on the FDP among target wins
+#' in any set \eqn{R} of hypotheses of TDC. See details for more information.
 #'
 #' @param labels A vector of (ordered) labels. See details below.
 #' @param indices A vector specifying the indices of hypotheses for which an
@@ -58,8 +58,8 @@
 #' exceeds \code{d_max} when the (non-interpolated) FDP bound on the top
 #' \eqn{k} hypotheses is less than \code{max_fdp}.
 #'
-#' @return An upper prediction bound on the FDP in the set of hypotheses whose
-#' \code{indices} are given as input.
+#' @return An upper prediction bound on the FDP among target wins in the set of
+#' hypotheses whose \code{indices} are given as input.
 #' @export
 #'
 #' @examples
@@ -73,16 +73,16 @@
 #'   )
 #'   indices <- c(1:100, 300:400, 600:650)
 #'   gamma <- 0.05
-#'   genband(labels, indices, gamma, "stband")
+#'   gen_bound(labels, indices, gamma, "stband")
 #' }
 #'
 #' @references Ebadi et al. (2022), Bounding the FDP in competition-based
 #' control of the FDR <https://arxiv.org/abs/2302.11837>.
-genband <- function(labels, indices, gamma, type,
-                    d_max = NULL, max_fdp = 0.5,
-                    c = 0.5, lambda = 0.5) {
+gen_bound <- function(labels, indices, gamma, type,
+                      d_max = NULL, max_fdp = 0.5,
+                      c = 0.5, lambda = 0.5) {
   if (!type %in% c("stband", "uniband")) {
-    stop("Invalid type argument in simband().")
+    stop("Invalid type argument in gen_bound().")
   }
   if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
     n <- length(labels)
@@ -247,12 +247,12 @@ genband <- function(labels, indices, gamma, type,
 
   } else {
     stop(
-      "Simultaneous bands require precomputed data tables. You may choose",
+      "Generalized bands require precomputed data tables. You may choose",
       " to run devtools::install_github(\"uni-Arya/fdpbandsdata\") to install",
       " these tables."
     )
   }
 }
 
-#' @rdname genband
-gen_bound <- genband
+#' @rdname gen_bound
+genband <- gen_bound

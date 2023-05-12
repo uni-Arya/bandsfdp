@@ -1,8 +1,8 @@
 #' Simultaneous Band
 #'
-#' This function computes upper prediction bounds on the top \eqn{k}
-#' hypotheses of TDC, for each \eqn{k = 1,\ldots,n} where \eqn{n} is the total
-#' number of hypotheses.
+#' This function computes upper prediction bounds on the target wins among the
+#' top \eqn{k} hypotheses of TDC, for each \eqn{k = 1,\ldots,n} where \eqn{n}
+#' is the total number of hypotheses.
 #'
 #' @param labels A vector of (ordered) labels. See details below.
 #' @param gamma The confidence parameter of the band. Typical values include
@@ -57,9 +57,9 @@
 #' exceeds \code{d_max} when the (non-interpolated) FDP bound on the top
 #' \eqn{k} hypotheses is less than \code{max_fdp}.
 #'
-#' @return A vector of upper prediction bounds on the FDP in the top \eqn{k}
-#' hypotheses for each \eqn{k = 1,\ldots,n} where \eqn{n} is the number of
-#' hypotheses.
+#' @return A vector of upper prediction bounds on the FDP of target wins among
+#' the top \eqn{k} hypotheses for each \eqn{k = 1,\ldots,n} where \eqn{n}
+#' is the total number of hypotheses.
 #' @export
 #'
 #' @examples
@@ -72,16 +72,16 @@
 #'     sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.1, 0.9))
 #'   )
 #'   gamma <- 0.05
-#'   head(simband(labels, gamma, "stband"))
+#'   head(sim_bound(labels, gamma, "stband"))
 #' }
 #'
 #' @references Ebadi et al. (2022), Bounding the FDP in competition-based
 #' control of the FDR <https://arxiv.org/abs/2302.11837>.
-simband <- function(labels, gamma, type,
-                    d_max = NULL, max_fdp = 0.5,
-                    c = 0.5, lambda = 0.5) {
+sim_bound <- function(labels, gamma, type,
+                      d_max = NULL, max_fdp = 0.5,
+                      c = 0.5, lambda = 0.5) {
   if (!type %in% c("stband", "uniband")) {
-    stop("Invalid type argument in simband().")
+    stop("Invalid type argument in sim_bound().")
   }
   if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
     n <- length(labels)
@@ -271,5 +271,5 @@ simband <- function(labels, gamma, type,
   }
 }
 
-#' @rdname simband
-sim_bound <- simband
+#' @rdname sim_bound
+simband <- sim_bound

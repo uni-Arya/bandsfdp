@@ -1,7 +1,7 @@
-#' Uniform Band
+#' Standardized Band
 #'
 #' This function computes an upper prediction bound, derived from the
-#' uniform band, on the FDP in TDC's list of discoveries.
+#' standardized band, on the FDP in TDC's list of discoveries.
 #'
 #' @param thresholds The rejection threshold of TDC. If given as
 #' a vector, an upper prediction bound is returned for each element.
@@ -38,7 +38,7 @@
 #' \eqn{k} hypotheses, and \eqn{D_k} is the number of decoy wins similarly.
 #'
 #' The argument \code{gamma} sets a confidence level of \code{1-gamma}. Since
-#' the uniform band requires pre-computed Monte Carlo statistics, only
+#' the standardized band requires pre-computed Monte Carlo quantiles, only
 #' certain values of \code{gamma} are available to use. Commonly used
 #' confidence levels, like 0.95 and 0.99, are available. We refer the reader
 #' to the README of this package for more details.
@@ -72,16 +72,16 @@
 #'   )
 #'   alpha <- 0.05
 #'   gamma <- 0.05
-#'   uniband(thresholds, labels, alpha, gamma)
+#'   tdc_sb(thresholds, labels, alpha, gamma)
 #' }
 #'
 #' @references Ebadi et al. (2022), Bounding the FDP in competition-based
 #' control of the FDR <https://arxiv.org/abs/2302.11837>.
-uniband <- function(thresholds, labels,
-                    alpha, gamma,
-                    c = 0.5, lambda = 0.5,
-                    n = length(labels),
-                    interpolate = TRUE) {
+tdc_sb <- function(thresholds, labels,
+                   alpha, gamma,
+                   c = 0.5, lambda = 0.5,
+                   n = length(labels),
+                   interpolate = TRUE) {
   if (any(thresholds < 0)) {
     stop("Negative threshold detected.")
   }
@@ -94,22 +94,15 @@ uniband <- function(thresholds, labels,
       d_max <- 5e4
     }
 
-    # Look up the appropriate u_gamma table
+    # Look up the appropriate quantile table
     name_search <- function(num) {
       format(ceiling(num * 10^5 - 1e-12) / 10^5, nsmall = 5)
     }
-    table_name <- paste0("utable_c", name_search(c), "_lam", name_search(lambda))
+    table_name <- paste0("qtable_c", name_search(c), "_lam", name_search(lambda))
 
-    rho <- get(table_name, envir = getNamespace("fdpbandsdata"))[[1]][
+    z <- get(table_name, envir = getNamespace("fdpbandsdata"))[
       d_max, paste0(1 - gamma)
     ]
-    sigma <- get(table_name, envir = getNamespace("fdpbandsdata"))[[2]][
-      d_max, paste0(1 - gamma)
-    ]
-    flip <- get(table_name, envir = getNamespace("fdpbandsdata"))[[3]][
-      d_max, paste0(1 - gamma)
-    ]
-    u <- ifelse(stats::runif(1) < flip, rho, sigma)
 
     decoy_fun <- function(threshold) {
       if (threshold > 0) {
@@ -132,7 +125,7 @@ uniband <- function(thresholds, labels,
         if (d + 1 > d_max) {
           return(Inf)
         }
-        floor(stats::qnbinom(1 - u, d + 1, prob = (1 / (1 + B))) + 1e-9)
+        max(0, floor(z * sqrt(B * (1 + B) * (d + 1)) + B * (d + 1) + 1e-9))
       }
 
       dbar <- function(threshold) {
@@ -143,7 +136,7 @@ uniband <- function(thresholds, labels,
         )
         max_value <- 0
         for (t in check_these) {
-          new_value <- ceiling(target_fun(t) - xi(decoy_fun(t))  - 1e-12)
+          new_value <- ceiling(target_fun(t) - xi(decoy_fun(t)) - 1e-12)
           if (new_value > max_value) {
             max_value <- new_value
           }
@@ -166,10 +159,10 @@ uniband <- function(thresholds, labels,
         if (t == 0) {
           return(0)
         }
-        if (d < 5e4) {
+        if (d < d_max) {
           min(1,
-            floor(stats::qnbinom(1 - u, d + 1, prob = (1 / (1 + B))) + 1e-12) /
-              max(1, t)
+            floor(z * sqrt(B * (1 + B) * (d + 1)) + B * (d + 1) + 1e-12) /
+              max(t, 1)
           )
         } else {
           1
@@ -183,12 +176,12 @@ uniband <- function(thresholds, labels,
     }
   } else {
     stop(
-      "The uniform band requires precomputed data tables. You may choose",
+      "The standardized band requires precomputed data tables. You may choose",
       " to run devtools::install_github(\"uni-Arya/fdpbandsdata\") to install",
       " these tables."
     )
   }
 }
 
-#' @rdname uniband
-tdc_ub <- uniband
+#' @rdname tdc_sb
+stband <- tdc_sb
