@@ -1,6 +1,6 @@
 Package: bandsfdp
 Title: Compute Upper Prediction Bounds on the FDP in Competition-Based Setups
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(
     person("Arya", "Ebadi", , "aeba3842@uni.sydney.edu.au", role = c("aut", "cre")),
     person("Dong", "Luo", , "dluo7139@uni.sydney.edu.au", role = "aut"),

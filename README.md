@@ -15,9 +15,9 @@ terminology of TDC throughout.
 
 In (single-decoy) TDC, each hypothesis is associated to a winning score
 and a label
-($1$
+($1$)
 for a target win and
-$-1$
+$-1$)
 for a decoy win). Functions in this package assume that the hypotheses
 are ordered in decreasing order of winning scores (with ties broken at
 random).
@@ -25,7 +25,7 @@ random).
 The functions `stband()` and `uniband()` give an upper prediction bound
 on the FDP in TDC’s discovery list. Given TDC’s rejection threshold, the
 target/decoy labels, and a desired confidence level
-$1-\gamma$,
+$1 - \gamma$,
 these functions return a real number
 $\eta$
 such that the FDP in the list of discoveries is
@@ -269,4 +269,36 @@ if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
   simband(labels, gamma, type = "stband")[700:706]
 }
 #> [1] 0.2402827 0.2416226 0.2416226 0.2416226 0.2416226 0.2416226 0.2429577
+```
+
+### Generalized FDP bounds
+
+One may be interested in computing an upper prediction bound on the FDP
+among an arbitrary set
+$R$
+of hypotheses. In this case, the function `genband()` should be used.
+Here, one uses the same arguments as in `simband()`, with an additional
+argument `indices` that specifies the set of indices
+$R$
+for which to compute the upper prediction bound over.
+
+Below is an example of such a use of the function.
+
+``` r
+suppressPackageStartupMessages(library(bandsfdp))
+set.seed(123)
+
+if (requireNamespace("fdpbandsdata", quietly = TRUE)) {
+  set.seed(123)
+  labels <- c(
+    rep(1, 250),
+    sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.9, 0.1)),
+    sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.5, 0.5)),
+    sample(c(1, -1), size = 250, replace = TRUE, prob = c(0.1, 0.9))
+  )
+  indices <- c(1:100, 300:400, 600:650)
+  gamma <- 0.05
+  genband(labels, indices, gamma, type = "stband")
+}
+#> [1] 0.2546296
 ```
